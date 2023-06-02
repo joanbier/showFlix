@@ -80,7 +80,15 @@ export class UserService {
     let toUpdate = await this.userRepository.findOneBy({ id });
     delete toUpdate.password;
 
-    let updated = Object.assign(toUpdate, dto);
+    const allowedProperties = ["username", "email", "image"];
+    const reducedDto = Object.keys(dto)
+      .filter((key) => allowedProperties.includes(key))
+      .reduce((obj, key) => {
+        obj[key] = dto[key];
+        return obj;
+      }, {});
+
+    let updated = Object.assign(toUpdate, reducedDto);
     return await this.userRepository.save(updated);
   }
 
@@ -127,6 +135,7 @@ export class UserService {
       email: user.email,
       token: this.generateJWT(user),
       image: user.image,
+      role: user.role,
     };
 
     return { user: userRO };

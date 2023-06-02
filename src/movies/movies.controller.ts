@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from "@nestjs/common";
 import { MoviesService } from "./movies.service";
 import { PaginationResponse } from "../shared/interfaces/pagination-response.interface";
@@ -24,6 +25,9 @@ import { CreateMovieDto } from "./dto/creat-movie.dto";
 import { CreateCommentDto } from "./dto/create-comment.dto";
 import { MovieRO } from "./movies.interface";
 import { CsvSeederService } from "../utilities/csv-seeder.service";
+import { Roles } from "../user/auth/roles-decorator";
+import { UserRole } from "../user/auth/user-role.enum";
+import { RolesGuard } from "../user/auth/roles.guard";
 
 @Controller("movies")
 @ApiTags("movies")
@@ -136,6 +140,8 @@ export class MoviesController {
   }
 
   @Post()
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.Admin)
   @ApiCreatedResponse({ description: "Created Succesfully" })
   @ApiOperation({ summary: "create a movie" })
   async createMovie(@Body() movieData: CreateMovieDto): Promise<MovieRO> {
@@ -148,6 +154,8 @@ export class MoviesController {
     description: "The movie has been successfully updated.",
   })
   @ApiResponse({ status: 403, description: "Forbidden." })
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.Admin)
   @Put(":id")
   async updateMovie(@Param() params, @Body() movieData: CreateMovieDto) {
     return this.moviesService.updateMovie(params.id, movieData);
@@ -159,6 +167,8 @@ export class MoviesController {
     description: "The movie has been successfully deleted.",
   })
   @ApiResponse({ status: 403, description: "Forbidden." })
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.Admin)
   @Delete(":id")
   async deleteMovie(@Param() params) {
     return this.moviesService.deleteMovie(params.id);

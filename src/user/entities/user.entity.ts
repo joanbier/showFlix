@@ -1,7 +1,7 @@
 import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 import { IsEmail } from "class-validator";
 import * as argon2 from "argon2";
-import { UserRole } from "../user-role.enum";
+import { UserRole } from "../auth/user-role.enum";
 
 @Entity("user")
 export class UserEntity {

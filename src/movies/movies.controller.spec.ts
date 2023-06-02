@@ -6,6 +6,7 @@ import { PaginationResponse } from "../shared/interfaces/pagination-response.int
 import { CommentEntity } from "./entities/comment.entity";
 import { Repository } from "typeorm";
 import { getRepositoryToken } from "@nestjs/typeorm";
+import { CsvSeederService } from "../utilities/csv-seeder.service";
 
 describe("MoviesController", () => {
   let moviesController: MoviesController;
@@ -16,9 +17,9 @@ describe("MoviesController", () => {
   beforeEach(async () => {
     const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [MoviesController],
-      // providers: [MoviesService],
       providers: [
         MoviesService,
+        CsvSeederService,
         {
           provide: getRepositoryToken(MovieEntity),
           useClass: Repository,
@@ -100,15 +101,13 @@ describe("MoviesController", () => {
         lastPage: Math.ceil(total / limit),
       };
 
-      jest
-        .spyOn(moviesService, "findAll")
-        .mockResolvedValue({
-          data: movies,
-          page,
-          limit,
-          total,
-          lastPage: Math.ceil(total / limit),
-        });
+      jest.spyOn(moviesService, "findAll").mockResolvedValue({
+        data: movies,
+        page,
+        limit,
+        total,
+        lastPage: Math.ceil(total / limit),
+      });
 
       const result = await moviesController.getAllMovies(page, limit);
 

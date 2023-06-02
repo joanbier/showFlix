@@ -8,28 +8,42 @@ import {
   UsePipes,
   Put,
   HttpException,
+  UseGuards,
 } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { ApiBearerAuth, ApiTags } from "@nestjs/swagger";
 import { UserRO } from "./user.interface";
-import { User } from "./user.decorator";
+import { User } from "./auth/user.decorator";
 import { ValidationPipe } from "../shared/pipes/validation.pipe";
 import { LoginUserDto } from "./dto/login-user.dto";
+import { UserEntity } from "./entities/user.entity";
+import { RolesGuard } from "./auth/roles.guard";
+import { Roles } from "./auth/roles-decorator";
+import { UserRole } from "./auth/user-role.enum";
 
 @ApiBearerAuth()
 @ApiTags("user")
 @Controller("user")
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) {
+    this.initializeMockData();
+  }
 
-  @Get()
+  @Get("/")
   async findMe(@User("email") email: string): Promise<UserRO> {
     return await this.userService.findByEmail(email);
   }
 
-  @Put()
+  @Get("/all")
+  @UseGuards(RolesGuard)
+  @Roles(UserRole.Admin)
+  async findAll(): Promise<UserEntity[]> {
+    return await this.userService.findAll();
+  }
+
+  @Put("/")
   async update(
     @User("id") userId: string,
     @Body("user") userData: UpdateUserDto,
@@ -38,7 +52,7 @@ export class UserController {
   }
 
   @UsePipes(new ValidationPipe())
-  @Post()
+  @Post("/")
   async create(@Body("user") userData: CreateUserDto) {
     return this.userService.create(userData);
   }
@@ -61,5 +75,16 @@ export class UserController {
     const { email, username, image } = _user;
     const user = { email, token, username, image };
     return { user };
+  }
+
+  async initializeMockData() {
+    const mockData: CreateUserDto[] = [
+      { username: "user", email: "user@user.pl", password: "user" },
+      { username: "admin", email: "admin@admin.pl", password: "admin" },
+    ];
+
+    for (const data of mockData) {
+      await this.userService.create(data);
+    }
   }
 }
