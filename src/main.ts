@@ -19,7 +19,7 @@ async function bootstrap() {
   SwaggerModule.setup("/docs", app, document);
 
   app.useGlobalGuards(new RolesGuard(app.get(Reflector)));
-  await app.listen(3000);
+  await app.listen(process.env.PORT || 3000);
 }
 
 bootstrap();
