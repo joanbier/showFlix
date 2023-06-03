@@ -66,7 +66,7 @@ export class MovieEntity {
   gross: string;
 
   @OneToMany(() => CommentEntity, (comment) => comment.movie, {
-    onDelete: "CASCADE",
+    // onDelete: "CASCADE",
     eager: true,
   })
   @JoinColumn()

@@ -43,6 +43,22 @@ export class UserController {
     return await this.userService.findAll();
   }
 
+  @Post("/favorites/:movieId")
+  async addMovieToFavorite(
+    @User("id") userId: string,
+    @Param("movieId") movieId: string,
+  ): Promise<any> {
+    return this.userService.addMovieToFavorite(userId, movieId);
+  }
+
+  @Delete("/favorites/:movieId")
+  async removeMovieFromFavorites(
+    @User("id") userId: string,
+    @Param("movieId") movieId: string,
+  ): Promise<any> {
+    return this.userService.removeMovieFromFavorites(userId, movieId);
+  }
+
   @Put("/")
   async update(
     @User("id") userId: string,
@@ -65,7 +81,6 @@ export class UserController {
   @UsePipes(new ValidationPipe())
   @Post("/login")
   async login(@Body("user") loginUserDto: LoginUserDto): Promise<UserRO> {
-    console.log(loginUserDto);
     const _user = await this.userService.findOne(loginUserDto);
 
     const errors = { User: " not found" };

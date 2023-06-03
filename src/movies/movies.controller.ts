@@ -28,6 +28,7 @@ import { CsvSeederService } from "../utilities/csv-seeder.service";
 import { Roles } from "../user/auth/roles-decorator";
 import { UserRole } from "../user/auth/user-role.enum";
 import { RolesGuard } from "../user/auth/roles.guard";
+import { User } from "../user/auth/user.decorator";
 
 @Controller("movies")
 @ApiTags("movies")
@@ -176,17 +177,18 @@ export class MoviesController {
 
   @Post(":id/comments")
   @ApiOperation({ summary: "Add a comment to the movie" })
-  @ApiResponse({ status: 200, description: "A comment has been created" })
+  @ApiResponse({ status: 200, description: "comment has been added" })
   @ApiResponse({ status: 404, description: "content of comment is required." })
   @ApiBearerAuth()
   async addComment(
     @Param("id") movieId,
+    @User("id") userId: string,
     @Body("comment") commentData: CreateCommentDto,
-  ): Promise<MovieRO> {
+  ): Promise<string> {
     if (!commentData) {
       throw new NotFoundException(`content of comment is required`);
     }
-    return await this.moviesService.createComment(movieId, commentData);
+    return await this.moviesService.createComment(movieId, commentData, userId);
   }
 
   @Delete(":movieId/comments/:commentId")

@@ -7,9 +7,13 @@ import { CommentEntity } from "./entities/comment.entity";
 import { CsvSeederService } from "../utilities/csv-seeder.service";
 import { AuthMiddleware } from "../user/auth/auth.middleware";
 import { UserModule } from "../user/user.module";
+import { UserEntity } from "../user/entities/user.entity";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([MovieEntity, CommentEntity]), UserModule],
+  imports: [
+    TypeOrmModule.forFeature([MovieEntity, CommentEntity, UserEntity]),
+    UserModule,
+  ],
   controllers: [MoviesController],
   providers: [MoviesService, CsvSeederService],
 })

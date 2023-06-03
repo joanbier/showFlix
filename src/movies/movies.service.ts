@@ -11,6 +11,7 @@ import { PaginationResponse } from "../shared/interfaces/pagination-response.int
 import { CommentEntity } from "./entities/comment.entity";
 import { MovieRO } from "./movies.interface";
 import { CreateMovieDto } from "./dto/creat-movie.dto";
+import { UserEntity } from "../user/entities/user.entity";
 
 @Injectable()
 export class MoviesService {
@@ -19,6 +20,8 @@ export class MoviesService {
     private readonly movieRepository: Repository<MovieEntity>,
     @InjectRepository(CommentEntity)
     private readonly commentRepository: Repository<CommentEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userRepository: Repository<UserEntity>,
   ) {}
 
   async findAll(
@@ -118,10 +121,17 @@ export class MoviesService {
   }
 
   async findOne(id: string): Promise<MovieRO> {
-    const movie = await this.movieRepository.findOne({
-      where: { id },
-      relations: ["comments"],
-    });
+    // const movie = await this.movieRepository.findOne({
+    //   where: { id },
+    //   relations: ["comments"],
+    // });
+    const movie = await this.movieRepository
+      .createQueryBuilder("movie")
+      .where("movie.id = :id", { id })
+      .leftJoinAndSelect("movie.comments", "comments")
+      .leftJoinAndSelect("comments.user", "user")
+      .select(["movie", "comments", "user.id"])
+      .getOne();
     if (!movie) {
       throw new NotFoundException(`Movie with ID ${id} not found`);
     }
@@ -173,21 +183,29 @@ export class MoviesService {
     return await this.movieRepository.delete(id);
   }
 
-  async createComment(movieId: string, commentData): Promise<MovieRO> {
+  async createComment(
+    movieId: string,
+    commentData,
+    userId: string,
+  ): Promise<string> {
     let movie = await this.movieRepository.findOneBy({ id: movieId });
-
+    const user = await this.userRepository.findOneBy({ id: userId });
     if (!movie) {
       throw new NotFoundException(`Movie with ID ${movieId} not found`);
+    }
+    if (!user) {
+      throw new NotFoundException(`User not found`);
     }
 
     const comment = new CommentEntity();
     comment.body = commentData;
+    comment.user = user;
 
     movie.comments.push(comment);
 
     await this.commentRepository.save(comment);
-    movie = await this.movieRepository.save(movie);
-    return { movie };
+    await this.movieRepository.save(movie);
+    return "comment has been added";
   }
 
   async deleteComment(movieId: string, commentId: string): Promise<MovieRO> {
@@ -210,7 +228,6 @@ export class MoviesService {
 
     if (deleteIndex >= 0) {
       const deleteComments = movie.comments.splice(deleteIndex, 1);
-      console.log(deleteComments);
       await this.commentRepository.delete(deleteComments[0].id);
       movie = await this.movieRepository.save(movie);
       return { movie };

@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { MovieEntity } from "./movie.entity";
+import { UserEntity } from "../../user/entities/user.entity";
 
 @Entity()
 export class CommentEntity {
@@ -13,4 +14,7 @@ export class CommentEntity {
     onDelete: "CASCADE",
   })
   movie: MovieEntity;
+
+  @ManyToOne(() => UserEntity, (user) => user.comments)
+  user: UserEntity;
 }

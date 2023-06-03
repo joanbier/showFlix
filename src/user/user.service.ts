@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { InjectRepository } from "@nestjs/typeorm";
@@ -10,12 +15,15 @@ import { SECRET } from "../config";
 import { LoginUserDto } from "./dto/login-user.dto";
 const jwt = require("jsonwebtoken");
 import * as argon2 from "argon2";
+import { MovieEntity } from "../movies/entities/movie.entity";
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    @InjectRepository(MovieEntity)
+    private readonly movieRepository: Repository<MovieEntity>,
   ) {}
 
   async create(userData: CreateUserDto): Promise<UserRO> {
@@ -63,8 +71,10 @@ export class UserService {
   }
 
   async findOne({ email, password }: LoginUserDto): Promise<UserEntity> {
-    const user = await this.userRepository.findOneBy({ email });
-    console.log(user);
+    const user = await this.userRepository.findOne({
+      where: { email },
+    });
+
     if (!user) {
       return null;
     }
@@ -108,8 +118,47 @@ export class UserService {
   }
 
   async findByEmail(email: string): Promise<UserRO> {
-    const user = await this.userRepository.findOneBy({ email: email });
+    const user = await this.userRepository.findOne({
+      where: { email },
+      relations: ["favoriteMovies"],
+    });
     return this.buildUserRO(user);
+  }
+
+  async addMovieToFavorite(
+    userId: string,
+    movieId: string,
+  ): Promise<UserEntity> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    const movie = await this.movieRepository.findOneBy({ id: movieId });
+
+    if (!user || !movie) {
+      throw new Error("User or movie not found");
+    }
+
+    user.favoriteMovies.push(movie);
+    return this.userRepository.save(user);
+  }
+
+  async removeMovieFromFavorites(
+    userId: string,
+    movieId: string,
+  ): Promise<UserEntity> {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
+
+    const movieIndex = user.favoriteMovies.findIndex(
+      (movie) => movie.id === movieId,
+    );
+    if (movieIndex === -1) {
+      throw new NotFoundException("Movie not found in favorites");
+    }
+
+    user.favoriteMovies.splice(movieIndex, 1);
+
+    return this.userRepository.save(user);
   }
 
   public generateJWT(user) {
@@ -136,6 +185,7 @@ export class UserService {
       token: this.generateJWT(user),
       image: user.image,
       role: user.role,
+      favoriteMovies: user.favoriteMovies,
     };
 
     return { user: userRO };
