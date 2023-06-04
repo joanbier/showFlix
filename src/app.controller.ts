@@ -6,8 +6,12 @@ import { MovieEntity } from "./movies/entities/movie.entity";
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
+  // @Get()
+  // getMoviesSample(): Promise<MovieEntity[]> {
+  //   return this.appService.getMoviesSample();
+  // }
   @Get()
-  getMoviesSample(): Promise<MovieEntity[]> {
-    return this.appService.getMoviesSample();
+  getHello(): Promise<string> {
+    return this.appService.getHello();
   }
 }

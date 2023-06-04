@@ -17,4 +17,8 @@ export class AppService {
       .limit(10)
       .getMany();
   }
+
+  async getHello(): Promise<string> {
+    return "Hello world;";
+  }
 }
