@@ -19,7 +19,7 @@ import * as url from "url";
 import * as dotenv from "dotenv";
 dotenv.config();
 
-const dbUrl = process.env.CLEARDB_DATABASE_UR;
+const dbUrl = process.env.CLEARDB_DATABASE_URL;
 
 let typeOrmConfig: TypeOrmModuleOptions;
 console.log(dbUrl);
