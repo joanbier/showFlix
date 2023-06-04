@@ -26,7 +26,7 @@ console.log(dbUrl);
 if (dbUrl) {
   const connectionUrl = new url.URL(dbUrl);
   typeOrmConfig = {
-    type: "mysql",
+    type: "postgres",
     host: connectionUrl.hostname,
     port: Number(connectionUrl.port),
     username: connectionUrl.username,
