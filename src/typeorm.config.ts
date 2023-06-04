@@ -31,7 +31,7 @@ if (jawsdbUrl) {
     password: connectionUrl.password,
     database: connectionUrl.pathname.substr(1),
     entities: [__dirname + "/**/*.entity{.ts,.js}"],
-    synchronize: true,
+    synchronize: false,
   };
 } else {
   typeOrmConfig = {
