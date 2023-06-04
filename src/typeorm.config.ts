@@ -16,6 +16,8 @@
 
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 import * as url from "url";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 const dbUrl = process.env.CLEARDB_DATABASE_UR;
 
