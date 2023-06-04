@@ -37,9 +37,9 @@ export class MoviesController {
     private moviesService: MoviesService,
     private csvSeederService: CsvSeederService,
   ) {
-    this.csvSeederService
-      .seedFromCsv("./src/utilities/imdb_top_1000.csv")
-      .then(() => console.log("imported csv to database!"));
+    // this.csvSeederService
+    //   .seedFromCsv("./src/utilities/imdb_top_1000.csv")
+    //   .then(() => console.log("imported csv to database!"));
   }
 
   @Get()
