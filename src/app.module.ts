@@ -17,4 +17,8 @@ import typeOrmConfig from "./typeorm.config";
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  constructor() {
+    console.log(typeOrmConfig);
+  }
+}
