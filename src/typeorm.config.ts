@@ -17,12 +17,12 @@
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 import * as url from "url";
 
-const jawsdbUrl = process.env.JAWSDB_URL;
+const dbUrl = process.env.CLEARDB_DATABASE_UR;
 
 let typeOrmConfig: TypeOrmModuleOptions;
-if (jawsdbUrl) {
-  const connectionUrl = new url.URL(jawsdbUrl);
-
+console.log(dbUrl);
+if (dbUrl) {
+  const connectionUrl = new url.URL(dbUrl);
   typeOrmConfig = {
     type: "mysql",
     host: connectionUrl.hostname,
