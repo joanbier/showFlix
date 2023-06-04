@@ -5,7 +5,9 @@ import { MoviesModule } from "./movies/movies.module";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { UserModule } from "./user/user.module";
 import { MovieEntity } from "./movies/entities/movie.entity";
-import typeOrmConfig from "./typeorm.config";
+import { typeOrmConfig } from "./typeorm.config";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 @Module({
   imports: [
