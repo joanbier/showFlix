@@ -28,7 +28,7 @@ import { UserRole } from "./auth/user-role.enum";
 @Controller("user")
 export class UserController {
   constructor(private readonly userService: UserService) {
-    this.initializeMockData();
+    // this.initializeMockData();
   }
 
   @Get("/")
