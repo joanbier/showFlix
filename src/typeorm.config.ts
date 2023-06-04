@@ -33,6 +33,7 @@ if (dbUrl) {
     password: connectionUrl.password,
     database: connectionUrl.pathname.substr(1),
     entities: [__dirname + "/**/*.entity{.ts,.js}"],
+    autoLoadEntities: true,
     synchronize: false,
   };
 } else {
