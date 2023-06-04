@@ -34,7 +34,7 @@ if (dbUrl) {
     database: connectionUrl.pathname.substr(1),
     entities: [__dirname + "/**/*.entity{.ts,.js}"],
     autoLoadEntities: true,
-    synchronize: false,
+    synchronize: true,
   };
 } else {
   typeOrmConfig = {
