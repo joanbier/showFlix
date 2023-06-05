@@ -5,6 +5,7 @@ import { Repository } from "typeorm";
 import { parse as csvParse } from "csv-parse";
 import * as fs from "fs";
 import { CommentEntity } from "../movies/entities/comment.entity";
+import { UserEntity } from "../user/entities/user.entity";
 
 @Injectable()
 export class CsvSeederService {
@@ -13,11 +14,14 @@ export class CsvSeederService {
     private readonly moviesEntityRepository: Repository<MovieEntity>,
     @InjectRepository(CommentEntity)
     private readonly commentEntityRepository: Repository<CommentEntity>,
+    @InjectRepository(UserEntity)
+    private readonly userEntityRepository: Repository<UserEntity>,
   ) {}
 
   async seedFromCsv(filePath: string): Promise<void> {
-    // await this.commentEntityRepository.delete({});
-    // await this.moviesEntityRepository.delete({});
+    await this.commentEntityRepository.delete({});
+    await this.moviesEntityRepository.delete({});
+    await this.userEntityRepository.delete({});
 
     const parser = csvParse({
       columns: true,
