@@ -33,6 +33,7 @@ if (dbUrl) {
     database: connectionUrl.pathname.substr(1),
     entities: [__dirname + "/**/*.entity{.ts,.js}"],
     synchronize: true,
+    dropSchema: true,
   };
 } else {
   typeOrmConfig = {
@@ -44,6 +45,7 @@ if (dbUrl) {
     database: "showflix",
     entities: [__dirname + "/**/*.entity{.ts,.js}"],
     synchronize: true,
+    dropSchema: true,
   };
 }
 

@@ -19,9 +19,9 @@ export class CsvSeederService {
   ) {}
 
   async seedFromCsv(filePath: string): Promise<void> {
-    await this.commentEntityRepository.delete({});
-    await this.moviesEntityRepository.delete({});
-    await this.userEntityRepository.delete({});
+    // await this.commentEntityRepository.delete({});
+    // await this.moviesEntityRepository.delete({});
+    // await this.userEntityRepository.delete({});
 
     const parser = csvParse({
       columns: true,
